@@ -6,11 +6,15 @@ router
     .route('/')
     .get(actorControllers.getAllActors)
     .post(actorControllers.createNewActor)
-    .put(actorControllers.updateActor)
-    .delete(actorControllers.deleteActor)
+
+router
+    .route('/filter')
+    .get(actorControllers.filterActors)
 
 router
     .route('/:id')
-    .get(actorControllers.getActorById);
+    .get(actorControllers.getActorById)
+    .put(actorControllers.updateActor)
+    .delete(actorControllers.deleteActor);
 
 export default router;

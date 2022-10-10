@@ -1,15 +1,20 @@
 import { Router } from 'express';
-import { getAllFilms, createNewFilm, getFilmById } from '../controllers/filmControllers.js';
+import filmControllers from '../controllers/filmControllers.js';
 const router = Router();
 
 
 router
     .route('/')
-    .get(getAllFilms)
-    .post(createNewFilm);
+    .get(filmControllers.getAllFilms)
+    .post(filmControllers.createNewFilm);
 
 router
     .route('/:id')
-    .get(getFilmById);
+    .get(filmControllers.getFilmById)
+    .put(filmControllers.updateFilm)
+    .delete(filmControllers.deleteFilm);
+
+router
+    .route('/filter')
 
 export default router;
