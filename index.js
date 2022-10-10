@@ -4,19 +4,19 @@ import {} from 'dotenv/config'
 import express, { json } from 'express';
 let app = express();
 
-import { logErrors, clientErrorHandler, errorHandler } from './helpers/errorHelpers.js';
+import { logErrors, clientErrorHandler, errorHandler } from './helpers/ErrorHelpers.js';
 
 var router = express.Router();
 
 // Configure middleware to support JSON data parsing in request object
 app.use(json());
 
-import actorRoutes from './routes/actorRoutes.js';
-import filmRoutes from './routes/filmRoutes.js';
+import ActorRoute from './routes/ActorRoute.js';
+import FilmRoute from './routes/FilmRoute.js';
 
 // Create Routes for actors
-router.use('/actors', actorRoutes);
-router.use('/films', filmRoutes);
+router.use('/actors', ActorRoute);
+router.use('/films', FilmRoute);
 
 app.use('/api/', router);
 

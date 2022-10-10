@@ -1,11 +1,23 @@
 import db from '../config/db.js';
+import {} from 'dotenv/config'
 
-let databaseName = `sakila`
+let databaseName = process.env.DB_NAME;
 
 let baseRepo = {
-    get: async (tableName) => {
+    get: async (tableName, dbTableColumnList, dbValuesList) => {
+
+        if (dbTableColumnList == undefined) dbTableColumnList = [];
+        if (dbValuesList == undefined) dbValuesList = [];
+
         let sql = `SELECT * FROM ${databaseName}.${tableName}`;
-        let [entities, ] = await db.execute(sql);
+        console.log(dbTableColumnList.join(' LIKE ? AND '));
+        if (dbTableColumnList.length > 0 && dbValuesList.length > 0) {
+            sql += ` WHERE ${dbTableColumnList.join(' LIKE ? AND ')} LIKE ?`
+        }
+
+        let insert = dbValuesList;
+        console.log(`db.execute(${sql}, ${insert})`)
+        let [entities, _] = await db.execute(sql, insert);
         return entities;
     },
 
@@ -15,25 +27,12 @@ let baseRepo = {
         let [[entity], _] = await db.execute(sql, insert);
         return entity;
     },
-    insert: async (columns, values, tableName) => {
+    insert: async (tableName, dbTableColumnList, dbValuesList) => {
         let sql = 
-        `INSERT INTO ${databaseName}.${tableName} (${columns}) VALUES(?,?,?)`;
-        let [entity, ] = await db.execute(sql, values);
+        `INSERT INTO ${databaseName}.${tableName} (${dbTableColumnList}) VALUES(?,?,?)`;
+        let insert = dbValuesList;
+        let [entity, ] = await db.execute(sql, insert);
         return entity.insertId;
-    },
-    filter: async (tableArray, valuesArray, tableName) => {
-        let sql = 
-        `
-            SELECT * 
-            FROM ${databaseName}.${tableName}
-            WHERE ${tableArray.join(' LIKE ? AND ')+" LIKE ?"}
-        `
-        console.log(sql);
-        let insert = valuesArray;
-        console.log(insert);
-        let [[entities], _] = await db.execute(sql, insert);
-        console.log(entities);
-        return entities;
     },
     update: async (first_name, last_name, last_updated) => {
 

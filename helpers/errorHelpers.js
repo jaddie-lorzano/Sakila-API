@@ -1,4 +1,4 @@
-import logRepo from "../repos/logRepo.js";
+import LogRepo from "../repos/LogRepo.js";
 
 export const logErrors = (err, req, res, next) => {
   let errorObject = errorBuilder(err);
@@ -7,7 +7,7 @@ export const logErrors = (err, req, res, next) => {
     "path": req.path,
     "app": req.app,
   };
-  logRepo.write(errorObject, (data) => {
+  LogRepo.write(errorObject, (data) => {
       console.log(data);
     }, (err) => {
       console.error(err);

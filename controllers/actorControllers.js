@@ -1,13 +1,18 @@
 import Actor from '../models/Actor.js';
-import baseRepo from '../repos/baseRepo.js';
+import BaseRepo from '../repos/BaseRepo.js';
+import ActorService from '../services/ActorService.js';
+import ACTOR_CONSTANTS from '../constants/ActorConstants.js'
 
-const TABLE_NAME = `actor`
-const FIRST_NAME = 'first_name'
-const LAST_NAME = 'last_name'
-
-let actorController = {
+let ActorController = {
     getAllActors: async (req, res, next) => {
-        await baseRepo.get(TABLE_NAME)
+        let dbTableColumnList = []; 
+        let dbValuesList = [];
+        // when query in request exists, list of actors will be filtered
+        if (Object.keys(req.query).length > 0) {
+            [ dbTableColumnList, dbValuesList ] = ActorService.getDbQueryTableAndValues(req, res, next);
+            // get the list of table column and values for the db query
+        };
+        await BaseRepo.get(ACTOR_CONSTANTS.ACTOR_TABLE_NAME, dbTableColumnList, dbValuesList)
             .then(data => {
                 if (data) {
                     let actors = new Array();
@@ -42,7 +47,7 @@ let actorController = {
     },
     getActorById: async (req, res, next) => {
         let actorId = req.params.id;
-        await baseRepo.getById(actorId, TABLE_NAME)
+        await BaseRepo.getById(actorId, ACTOR_CONSTANTS.ACTOR_TABLE_NAME)
             .then(data => {
                 if (data) {
                     let actor = new Actor(
@@ -75,12 +80,13 @@ let actorController = {
         let { firstName, lastName } = req.body;
         let actor = new Actor(firstName, lastName);
         actor.updateDate();
-        let actorColumns = `${FIRST_NAME},${LAST_NAME},last_update`;
+        ACTOR_CONSTANTS.ACTOR_TABLE_NAME, dbTableColumnList, dbValuesList
+        let actorColumns = `${ACTOR_CONSTANTS.ACTOR_TABLE_FIRST_NAME_COLUMN},${ACTOR_CONSTANTS.ACTOR_TABLE_LAST_NAME_COLUMN},${ACTOR_CONSTANTS.ACTOR_TABLE_LAST_UPDATE}`;
         let values = [ actor.firstName, actor.lastName, actor.lastUpdateDate ];
-        let actorId = await baseRepo.insert(actorColumns, values, TABLE_NAME)
+        let actorId = await BaseRepo.insert(actorColumns, values, ACTOR_CONSTANTS.ACTOR_TABLE_NAME)
             .then(data => { return data })
             .catch(err => next(err));
-        await baseRepo.getById(actorId, TABLE_NAME)
+        await BaseRepo.getById(actorId, ACTOR_CONSTANTS.ACTOR_TABLE_NAME)
             .then(data => {
                 let actor = new Actor(
                     data.first_name, 
@@ -96,41 +102,20 @@ let actorController = {
             })
             .catch(err => next(err));
     },
-    filterActors: async (req, res, next) => {
-        let firstName = req.query.fname;
-        let lastName = req.query.lname;
-        let message = ``;
-        if (firstName && lastName) {
-            message += `Filter actors by first Name: ${firstName} and by last Name: ${lastName}`;
-            let tableArray = [FIRST_NAME,LAST_NAME];
-            let valuesArray = [`${firstName}%`, `${lastName}%`];
-            let filteredActors = await baseRepo.filter(tableArray, valuesArray, TABLE_NAME)
-            res.status(200).json({
-                "filteredActors": filteredActors
-            })
-        }
-        if (firstName && lastName == null) {
-            message += "Filter actors by first Name: " + firstName;
-        }
-        if (firstName == null && lastName) {
-            message += "Filter actors by last Name: " + lastName;
-        }
-        if (firstName == null && lastName == null) {
-            message += `Please check your filter parameters`;
-        }
-        // await baseRepo.getById(actorId, TABLE_NAME)
-    },
     updateActor: async (req, res, next) => {
-        
+        res.send("Actor updated successfully");
     },
     deleteActor: async (req, res, next) => {
         let actorId = req.params.id;
         let actor = await Actor.getById(actorId);
         actor.delete();
         res.status(200).json({
-            "actor": actor
+            "status": 200,
+            "statusText": "OK",
+            "message": `Actor '${actor.firstName} ${actor.lastName}' with id '${actor.id}' retrieved successfully`,
+            "data": { "actor": actor }
         });
     }
 };
 
-export default actorController;
+export default ActorController;

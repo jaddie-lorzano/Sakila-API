@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import filmControllers from '../controllers/filmControllers.js';
+import filmControllers from '../controllers/FilmControllers.js';
 const router = Router();
 
 
@@ -9,12 +9,9 @@ router
     .post(filmControllers.createNewFilm);
 
 router
-    .route('/:id')
+    .route('/:id(\\d+)')
     .get(filmControllers.getFilmById)
     .put(filmControllers.updateFilm)
     .delete(filmControllers.deleteFilm);
-
-router
-    .route('/filter')
 
 export default router;
