@@ -1,11 +1,24 @@
-export async function getAllFilms(req, res, next) {
-    res.send('Get all films route')
+import Actor from '../models/Actor.js';
+import baseRepo from '../repos/baseRepo.js';
+
+let tableName = 'actor';
+
+let filmControllers = {
+    getAllFilms: async (req, res, next) => {
+
+    },
+    getFilmById: async (req, res, next) => {
+
+    },
+    createNewFilm: async (req, res, next) => {
+
+    },
+    updateFilm: async (req, res, next) => {
+
+    },
+    deleteFilm: async (req, res, next) => {
+
+    }
 }
 
-export async function createNewFilm(req, res, next) {
-    res.send('Create new film route')
-}
-
-export async function getFilmById(req, res, next) {
-    res.send('Get film by ID route')
-}
+export default filmControllers;
