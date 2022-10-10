@@ -1,17 +1,13 @@
-import actorRepo from '../repos/actorRepo.js';
-import genericRepo from '../repos/genericRepo.js';
-
 export default class Actor {
 
+    constructor(firstName, lastName, lastUpdateDate, id) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.lastUpdateDate = lastUpdateDate;
+        this.id = id;
+    };
 
-    constructor(first_name, last_name) {
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.table_name = 'actor';
-    }
-
-
-    save() {
+    updateDate() {
         let d = new Date();
         let yyyy = d.getFullYear();
         let mm = d.getMonth() + 1;
@@ -20,25 +16,8 @@ export default class Actor {
         let MM = d.getMinutes();
         let SS = d.getSeconds();
 
-        let updatedAtDate = `${yyyy}-${mm}-${dd} ${HH}:${MM}:${SS}`;
-        let insert = [this.first_name, this.last_name, updatedAtDate];
-        let newActor = genericRepo.insert(insert, this.table_name);
-        return newActor;
-    }
+        let currentDateTime = `${yyyy}-${mm}-${dd} ${HH}:${MM}:${SS}`;
+        this.lastUpdateDate = currentDateTime;
+    };
 
-    getAll() {
-        let actors = genericRepo.get(this.table_name);
-        return actors
-    }
-
-    getById(id) {
-        let actor = genericRepo.getById(id, this.table_name);
-        return actor;
-    }
-
-    delete(id) {
-        let actor = genericRepo.delete(id, this.table_name);
-        deleteActor(actor);
-    }
-
-}
+};
