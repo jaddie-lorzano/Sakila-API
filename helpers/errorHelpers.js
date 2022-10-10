@@ -9,9 +9,9 @@ export const logErrors = (err, req, res, next) => {
   };
   logRepo.write(errorObject, (data) => {
       console.log(data);
-    }, function (err) {
-    console.error(err);
-  });
+    }, (err) => {
+      console.error(err);
+    });
   next(err);
 }
 
